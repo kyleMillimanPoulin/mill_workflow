@@ -1,0 +1,50 @@
+---
+title: "kyles_workflow"
+format: html
+editor: visual
+---
+
+## Packages
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+```
+
+## Data Import
+
+```{r}
+claims <- read_csv("claims.csv")
+```
+
+## Data Cleaning
+```{r}
+claims_clean <- claims %>%
+  filter(STATUS1 == "BILLED") %>%  # Correct comparison operator
+  select(Id, DIAGNOSIS1, CURRENTILLNESSDATE) %>%
+  mutate(TAX = ifelse(is.numeric(DIAGNOSIS1), DIAGNOSIS1 * 0.1, 0)) %>%  # Check if numeric
+  arrange(desc(DIAGNOSIS1)) %>%
+  summarize(
+    total_amount = sum(DIAGNOSIS1, na.rm = TRUE),
+    avg_amount = mean(DIAGNOSIS1, na.rm = TRUE),
+    total_tax = sum(TAX, na.rm = TRUE)
+  )
+
+
+```
+
+## Data Visualization
+```{r}
+p<-ggplot(claims, aes(x = DIAGNOSIS1)) +  # Change to appropriate variable
+  geom_histogram(bins = 30L, fill = "#112446") +
+  theme_minimal()
+ggplotly(p)
+```
+
+## Data Analysis
+```{r}
+
+```
+
